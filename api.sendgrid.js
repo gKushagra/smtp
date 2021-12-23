@@ -13,7 +13,7 @@ const client = new MongoClient(mongoUri);
 
 sgMail.setApiKey(process.env.API_KEY)
 
-router.post('/email', function (req, res, next) {
+router.post('/email', async function (req, res, next) {
 
     const { to, subject, text, html } = req.body;
 
@@ -21,14 +21,14 @@ router.post('/email', function (req, res, next) {
 
     sgMail
         .send(msg)
-        .then(() => {
+        .then(async () => {
             console.log('Email sent');
 
             try {
                 await client.connect();
                 var database = client.db(db);
                 var collection = database.collection(coll);
-                await collection.insertOne(doc);
+                await collection.insertOne(msg);
             } catch (error) {
                 throw new Error(error);
             } finally {
@@ -43,7 +43,7 @@ router.post('/email', function (req, res, next) {
 
 });
 
-router.get('/email', function (req, res, next) {
+router.get('/email', async function (req, res, next) {
 
     var logs = [];
 
@@ -51,7 +51,7 @@ router.get('/email', function (req, res, next) {
         await client.connect();
         var database = client.db(db);
         var collection = database.collection(coll);
-        var cursor = collection.findOne(query, options);
+        var cursor = collection.find();
 
         // print a message if no documents were found
         if ((await cursor.count()) === 0) {
