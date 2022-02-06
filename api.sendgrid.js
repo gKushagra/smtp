@@ -1,6 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const { MongoClient } = require('mongodb');
+const nodemailer = require('nodemailer');
+const imap = require('imap-simple');
+const mimemessage = require('mimemessage');
 const sgMail = require('@sendgrid/mail')
 const db = process.env.MONGO_DB;
 const coll = process.env.MONGO_COLL;
@@ -13,33 +16,65 @@ const client = new MongoClient(mongoUri);
 
 sgMail.setApiKey(process.env.API_KEY)
 
-router.post('/email', async function (req, res, next) {
+router.post('/email/:service', async function (req, res, next) {
 
     const { to, subject, text, html } = req.body;
 
     const msg = { to, from: verfSender, subject, text, html };
 
-    sgMail
-        .send(msg)
-        .then(async () => {
-            console.log('Email sent');
+    const provider = req.params.service;
 
-            try {
-                await client.connect();
-                var database = client.db(db);
-                var collection = database.collection(coll);
-                await collection.insertOne(msg);
-            } catch (error) {
-                throw new Error(error);
-            } finally {
-                await client.close();
-                res.status(200).json('Email sent and logged');
-            }
-        })
-        .catch((error) => {
-            console.error(error)
-            res.sendStatus(500);
+    if (provider === 'sendgrid') {
+        sgMail
+            .send(msg)
+            .then(async () => {
+                console.log("Message sent: N/A");
+
+                await saveAndAppendEmail(msg)
+                    .then(() => res.status(200).json('Email sent, appended and logged'))
+                    .catch(e => {
+                        console.log(e);
+                        res.status(200).json('Email sent but not appended or logged');
+                    });
+            })
+            .catch((error) => {
+                console.error(error)
+                res.sendStatus(500);
+            });
+    } else {
+        let transporter = nodemailer.createTransport({
+            host: process.env.PE_HOST,
+            port: process.env.PE_PORT,
+            secure: process.env.PE_SECURE === 'true' ? true : false, // true for 465, false for other ports
+            auth: {
+                user: process.env.PE_DOMAIN,
+                pass: process.env.PE_KEY.split('$')[1]
+            },
         });
+
+        try {
+            var info = await transporter.sendMail({
+                from: msg.from, // sender address
+                to: msg.to, // list of receivers
+                subject: msg.subject, // Subject line
+                text: msg.text, // plain text body
+                html: msg.html, // html body
+            });
+        } catch (error) {
+            console.log(error);
+            res.sendStatus(500);
+        } finally {
+            console.log("Message sent: %s", info.messageId);
+            msg['nodemailer_id'] = info.messageId;
+
+            await saveAndAppendEmail(msg)
+                .then(() => res.status(200).json('Email sent, appended and logged'))
+                .catch(e => {
+                    console.log(e);
+                    res.status(200).json('Email sent but not appended or logged')
+                });
+        }
+    }
 
 });
 
@@ -68,5 +103,50 @@ router.get('/email', async function (req, res, next) {
     }
 
 });
+
+async function saveAndAppendEmail(msg) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await client.connect();
+            var database = client.db(db);
+            var collection = database.collection(coll);
+            await collection.insertOne(msg);
+        } catch (error) {
+            console.log(error);
+
+        } finally {
+            await client.close();
+            imap.connect({
+                imap: {
+                    user: process.env.PE_DOMAIN,
+                    password: process.env.PE_KEY.split('$')[1],
+                    host: process.env.PE_HOST,
+                    port: process.env.PE_PORT_2,
+                    tls: process.env.PE_SECURE === 'true' ? true : false,
+                    authTimeout: 3000
+                }
+
+            }).then(function (connection) {
+                var message = mimemessage.factory({
+                    contentType: 'multipart/mixed',
+                    body: []
+                });
+                message.header('From', msg.from);
+                message.header('To', msg.to);
+                message.header('Subject', msg.subject);
+                message.header('Message-ID', msg.nodemailer_id);
+                var htmlEntity = mimemessage.factory({
+                    contentType: 'text/html;charset=utf-8',
+                    body: msg.html
+                });
+                message.body.push(htmlEntity);
+
+                connection.append(message.toString(), { mailbox: 'Sent', });
+
+            }).catch(e => console.log(e));
+            resolve();
+        }
+    });
+}
 
 module.exports = router;
