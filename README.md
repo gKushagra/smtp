@@ -29,6 +29,10 @@ Create a .env in the root of the project with following environment variables:
 - `MONGO_COLL` collection in `MongoDB` database for storing email logs
 
 
+
+[View API Documentation on Postman](https://documenter.getpostman.com/view/10989329/UVeGrRW8)
+
+
 ## License
 
 Apache License 2.0
