@@ -1,5 +1,5 @@
-require('dotenv').config();
-const api = require('./api.sendgrid');
+const PORT = require('./config').port;
+const routes = require('./routes');
 const express = require('express');
 const cors = require('cors');
 
@@ -9,7 +9,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
-app.use('/', api);
+app.use('/api/v1', routes);
 
-const PORT = process.env.PORT;
-app.listen(PORT, () => { console.log(`Listening on PORT ${PORT}`) });
+app.listen(PORT, () => {
+    console.log(`API running on PORT:${PORT}`)
+});
