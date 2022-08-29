@@ -45,10 +45,10 @@ router.post('/email/:service', async function (req, res, next) {
         let transporter = nodemailer.createTransport({
             host: process.env.PE_HOST_1,
             port: process.env.PE_PORT_1,
-            secure: process.env.PE_SECURE === 'true' ? true : false, // true for 465, false for other ports
+            secure: true, // true for 465, false for other ports
             auth: {
                 user: process.env.PE_DOMAIN,
-                pass: process.env.PE_KEY.split('$')[1]
+                pass: process.env.PE_KEY
             },
         });
 
@@ -119,10 +119,10 @@ async function saveAndAppendEmail(msg) {
             imap.connect({
                 imap: {
                     user: process.env.PE_DOMAIN,
-                    password: process.env.PE_KEY.split('$')[1],
+                    password: process.env.PE_KEY,
                     host: process.env.PE_HOST_2,
                     port: process.env.PE_PORT_2,
-                    tls: process.env.PE_SECURE === 'true' ? true : false,
+                    tls: true,
                     authTimeout: 3000
                 }
 
