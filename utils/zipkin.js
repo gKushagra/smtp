@@ -2,7 +2,7 @@ const config = require('../config');
 const { Tracer, ExplicitContext, BatchRecorder, jsonEncoder } = require('zipkin');
 const { HttpLogger } = require('zipkin-transport-http');
 
-export const tracer = new Tracer({
+const tracer = new Tracer({
     ctxImpl: new ExplicitContext(),
     recorder: new BatchRecorder({
         logger: new HttpLogger({
@@ -12,3 +12,5 @@ export const tracer = new Tracer({
     }),
     localServiceName: "email-service",
 });
+
+module.exports = tracer;

@@ -14,7 +14,7 @@ const produce = async (data) => {
         let traceId = uuid();
         await producer.send({
             topic,
-            messages: [{ traceId, data }]
+            messages: [{ key: traceId, value: JSON.stringify(data) }]
         });
     } catch (error) {
         console.log("Error occurred while producing message", error);

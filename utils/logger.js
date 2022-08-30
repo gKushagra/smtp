@@ -2,7 +2,7 @@ const winston = require('winston');
 const path = require('path');
 
 const _logger = winston.createLogger({
-    levels,
+    levels: winston.config.npm.levels,
     format: winston.format.json(),
     defaultMeta: { service: 'email-service' },
     transports: [

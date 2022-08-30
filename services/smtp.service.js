@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 const imapService = require('../services/imap.service');
 const _logger = require('../utils/logger');
 
-function sendThruSgMail({ to, from, subject, text, html }) {
+async function sendThruSgMail({ to, from, subject, text, html }) {
     sgMail.setApiKey(process.env.API_KEY);
     sgMail
         .send(msg)
@@ -29,7 +29,7 @@ function sendThruSgMail({ to, from, subject, text, html }) {
         });
 }
 
-function sendThruNodemailer(msg = { to, from, subject, text, html }) {
+async function sendThruNodemailer(msg = { to, from, subject, text, html }) {
     const transporter = nodemailer.createTransport(config.smtp);
     try {
         var info = await transporter.sendMail(msg);
