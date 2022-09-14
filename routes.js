@@ -52,8 +52,8 @@ router.get('/email', async function (req, res, next) {
     try {
         await client.connect();
         _logger.info(`connected to db`);
-        var db = client.db(db);
-        var collection = db.collection(coll);
+        var db = client.db(config.mongo.db);
+        var collection = db.collection(config.mongo.coll);
         var cursor = collection.find();
         // print a message if no documents were found
         if ((await cursor.count()) === 0) {
