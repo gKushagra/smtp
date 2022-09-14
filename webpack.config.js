@@ -11,7 +11,8 @@ module.exports = {
     },
     output: {
         path: path.join(__dirname, '/dist'),
-        filename: '[name].api.[fullhash].js'
+        // filename: '[name].api.[fullhash].js'
+        filename: '[name].js'
     },
     target: 'node',
     node: {
