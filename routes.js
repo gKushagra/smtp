@@ -2,7 +2,6 @@ const config = require('./config');
 const express = require('express');
 const smtpService = require('./services/smtp.service');
 const database = require('./utils/database');
-// const kafkaProducer = require('./utils/kafka');
 const _logger = require('./utils/logger');
 
 var router = express.Router();
@@ -20,27 +19,11 @@ router.post('/email/:service', async function (req, res, next) {
             var result = smtpService.sendThruNodemailer(msg);
         }
         console.log(result);
-        // await kafkaProducer({
-        //     to,
-        //     success: "Email sent, appended and saved", // replace with result
-        //     error: null
-        // }).catch(err => {
-        //     console.log(err);
-        //     _logger.error(`error in kafka producer ${err}`);
-        // });
         _logger.info(`email sent, appended and saved result: ${result}`);
         res.status(200).json('Email sent, appended and saved')
     } catch (error) {
         console.log(error);
         _logger.error(`error in sending, saving or appending email: ${error}`);
-        // await kafkaProducer({
-        //     to,
-        //     status: null,
-        //     error
-        // }).catch(err => {
-        //     console.log(err);
-        //     _logger.error(`error in kafka producer ${err}`);
-        // });
         res.status(200).json(error);
     }
 });
@@ -65,22 +48,10 @@ router.get('/email', async function (req, res, next) {
     } catch (error) {
         console.log("Error occurred while retrieving emails", error)
         _logger.error(`error occurred while retrieving emails ${error}`);
-        // await kafkaProducer({
-        //     message: "Error occurred while retrieving emails"
-        // }).catch(err => {
-        //     console.log(err);
-        //     _logger.error(`error in kafka producer ${err}`);
-        // });
         res.sendStatus(500);
     } finally {
         await client.close();
         _logger.info(`retrieved all emails`);
-        // await kafkaProducer({
-        //     message: "Retrieved emails successfully"
-        // }).catch(err => {
-        //     console.log(err);
-        //     _logger.error(`error in kafka producer ${err}`);
-        // });
         res.status(200).json(logs);
     }
 });
