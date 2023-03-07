@@ -1,7 +1,4 @@
 /node_modules/
 /dist/
-/logs/
 .env
-docker-compose.yml
 .DS_Store
-.dockerignore

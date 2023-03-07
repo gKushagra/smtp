@@ -2,17 +2,12 @@ require('dotenv').config();
 
 var props = {};
 
-props['port'] = process.env.PORT || 5777;
+props['port'] = process.env.PORT || 7653;
 
-props['mongo'] = {
-    uri: process.env.MONGO_URI,
-    db: process.env.MONGO_DB,
-    coll: process.env.MONGO_COLL
-};
-
-props['sendgrid'] = process.env.API_KEY;
-
-props['verifiedSender'] = process.env.VRF_SENDER;
+props['sendgrid'] = {
+    apiKey: process.env.SG_API_KEY,
+    verifiedSender: process.env.SG_VERIFIED_SENDER
+}
 
 props['smtp'] = {
     host: process.env.SMTP_HOST,
@@ -32,14 +27,7 @@ props['imap'] = {
         user: process.env.IMAP_USER,
         pass: process.env.IMAP_PASS
     },
-    authTimeout: 3000
+    // authTimeout: 3000
 };
-
-props['kafka'] = {
-    topic: process.env.KAFKA_TOPIC,
-    bootstrapServers: process.env.KAFKA_URL
-};
-
-props['zipkin'] = process.env.ZIPKIN_URL;
 
 module.exports = props;
