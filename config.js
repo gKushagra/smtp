@@ -1,15 +1,8 @@
 require('dotenv').config();
 
-var props = {};
+exports.PORT = process.env.PORT || 7653;
 
-props['port'] = process.env.PORT || 7653;
-
-props['sendgrid'] = {
-    apiKey: process.env.SG_API_KEY,
-    verifiedSender: process.env.SG_VERIFIED_SENDER
-}
-
-props['smtp'] = {
+exports.SMTP = {
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
     secure: true,
@@ -19,7 +12,7 @@ props['smtp'] = {
     }
 };
 
-props['imap'] = {
+exports.IMAP = {
     imap: {
         user: process.env.IMAP_USER,
         password: process.env.IMAP_PASS,
@@ -29,5 +22,3 @@ props['imap'] = {
         authTimeout: 3000
     }
 };
-
-module.exports = props;
