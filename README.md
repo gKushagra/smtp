@@ -1,4 +1,4 @@
-# Email Microservice
+# SMTP
 
 - Send emails using Nodemailer using SMTP.
 - All emails sent are appended to Sent using IMAP folder on email server.
