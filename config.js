@@ -20,14 +20,14 @@ props['smtp'] = {
 };
 
 props['imap'] = {
-    host: process.env.IMAP_HOST,
-    port: process.env.IMAP_PORT,
-    tls: true,
-    auth: {
+    imap: {
         user: process.env.IMAP_USER,
-        pass: process.env.IMAP_PASS
-    },
-    // authTimeout: 3000
+        password: process.env.IMAP_PASS,
+        host: process.env.IMAP_HOST,
+        port: process.env.IMAP_PORT,
+        tls: true,
+        authTimeout: 3000
+    }
 };
 
 module.exports = props;
