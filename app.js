@@ -5,6 +5,7 @@ const imap = require('imap-simple');
 const mimemessage = require('mimemessage');
 const cors = require('cors');
 const axios = require('axios').default;
+const sgMail = require('@sendgrid/mail')
 
 var app = express();
 
@@ -57,6 +58,21 @@ app.post('/', checkAuth, async function (req, res) {
         console.error(error);
         res.status(500).json(error);
     }
+});
+
+app.post('/sendgrid', checkAuth, async function (req, res) {
+    const { to, from, subject, text, html } = req.body;
+    const msg = { to, from, subject, text, html };
+    sgMail.setApiKey(config.SENDGRID.apiKey);
+    sgMail
+        .send(msg)
+        .then(() => {
+            res.status(200).json({ text: "Email sent" })
+        })
+        .catch((error) => {
+            console.error(error);
+            res.status(500).json(error);
+        })
 });
 
 app.listen(config.PORT, () => {

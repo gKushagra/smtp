@@ -22,3 +22,7 @@ exports.IMAP = {
         authTimeout: 3000
     }
 };
+
+exports.SENDGRID = {
+    apiKey: process.env.SG_API_KEY
+}
