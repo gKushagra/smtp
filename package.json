@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gKushagra/sendgrid-service.git"
+    "url": "git+https://github.com/gKushagra/smtp.git"
   },
   "author": "Kushagra Gupta",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gKushagra/sendgrid-service/issues"
+    "url": "https://github.com/gKushagra/smtp/issues"
   },
-  "homepage": "https://github.com/gKushagra/sendgrid-service#readme",
+  "homepage": "https://github.com/gKushagra/smtp#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
