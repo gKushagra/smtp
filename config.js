@@ -11,5 +11,4 @@ module.exports = {
       pass: process.env.SMTP_PASS,
     },
   },
-  MLSN_API_KEY: process.env.MLSN_API_TOKEN,
 };
