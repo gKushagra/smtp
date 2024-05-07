@@ -17,9 +17,9 @@ app.post('/', async function(req, res) {
     await transporter.sendMail(msg);
   } catch (error) {
     console.error(error);
-    res.status(500).json('Unable to send email at this time.');
+    res.status(500).json({message: 'Unable to send email at this time.'});
   }
-  return res.status(200).json('Email Sent');
+  return res.status(200).json({message: 'Email Sent'});
 });
 
 app.listen(config.PORT, () => {
